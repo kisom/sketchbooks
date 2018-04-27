@@ -1,0 +1,6 @@
+{
+    "board": "adafruit:nrf52:feather52",
+    "configuration": "softdevice=s132v201,debug=l0",
+    "sketch": "arduino/nrf52/blink/blink.ino",
+    "port": "/dev/ttyUSB0"
+}
