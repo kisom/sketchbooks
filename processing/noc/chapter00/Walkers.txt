@@ -1,0 +1,9 @@
+WALKERS:
+
+1. Single choice, always step.
+2. Two choices, steps aren't required.
+3. Tend to go down and to the right.
+4. Example bias to walk right.
+5. 50% probability of moving towards the mouse.
+6. Gaussian distribution of steps.
+7. Lévy flight with Monte Carlo step probabilities.
