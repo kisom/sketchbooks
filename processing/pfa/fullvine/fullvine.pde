@@ -1,5 +1,5 @@
 void setup() {
-	fullScreen();
+	fullScreen(P2D);
 	noFill();
 	colorMode(HSB, 360, 99, 99);
 	strokeWeight(2);
@@ -27,6 +27,7 @@ void keyPressed() {
 }
 
 void drawFlower(float xc, float yc) {
+	println("drawing flower");
 	pushMatrix();
 	pushStyle();
 	noStroke();
@@ -39,7 +40,7 @@ void drawFlower(float xc, float yc) {
 	for (int i = 0; i < numLobes; i++) {
 		float a = map(i, 0, numLobes, 0, TWO_PI);
 		float a1 = map(i+1, 0, numLobes, 0, TWO_PI);
-		float r = random(10, 50);
+		float r = random(10, 50) * displayDensity;
 
 		float x = r * cos(a);
 		float x1 = r * cos(a1);
@@ -56,6 +57,7 @@ void drawFlower(float xc, float yc) {
 }
 
 void drawSpiral(float xc, float yc, float a) {
+  println("drawing spiral");
   pushMatrix();
   pushStyle();
   translate(xc, yc);  
@@ -63,7 +65,7 @@ void drawSpiral(float xc, float yc, float a) {
   noFill();
   beginShape();
   float maxt = random(5, 10);
-  float maxr = random(20, 70);
+  float maxr = random(20, 70) * displayDensity;
   float sign = (random(1) < 0.5) ? -1 : +1;  
   float x0 = maxr * cos(sign);
   float y0 = maxr * sin(sign);
@@ -78,7 +80,7 @@ void drawSpiral(float xc, float yc, float a) {
   fill(random(310, 360), 80, 80);
   float x1 = (maxr/maxt) * cos(sign * maxt) - x0;
   float y1 = (maxr/maxt) * sin(sign * maxt) - y0;
-  float r = random(5, 10);
+  float r = random(5, 10) * displayDensity;
   ellipse(x1, y1, r, r);
   popStyle();
   popMatrix();
