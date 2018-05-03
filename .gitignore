@@ -3,3 +3,6 @@
 /processing/modes
 /processing/tools
 /processing/libraries
+
+# PC build artifacts
+/pc/ble/beacon-scanner
