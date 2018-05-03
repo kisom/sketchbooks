@@ -2,6 +2,23 @@
 
 #include <bluefruit.h>
 
+/*
+ * EXPERIMENT 1
+ * 
+ * For reference, see https://dl.kyleisom.net/posts/2018/04/30/2018-04-30/. This
+ * sketch is an implementation of 'Going Forward' #1. 
+ * 
+ * A beacon is defined as 
+ *     + [4B] a header (the string ENVS)
+ *     + [4B] a node identifier (an unsigned 32-bit integer)
+ *     + [4B] a sensor reading (an unsigned 32-bit integer)
+ *     + [4B] a CRC32 checksum
+ * The major number isn't used, but the minor number is meant to be the sensor
+ * ID (e.g. temperature, humidity, etc...).
+ * 
+ * In this first experiment, the beacon is updated every second.
+ */
+
 #define MANUFACTURER_ID	0x0059
 
 uint8_t beaconID[16] = {
@@ -19,6 +36,7 @@ static uint32_t id = 0x42;
 BLEBeacon beacon(beaconID, major, minor, -45);
 
 void setup() {
+	Serial.begin(9600);
 	Bluefruit.begin();
 	Bluefruit.setTxPower(0);
 	Bluefruit.setName("env-node-proto");
@@ -37,11 +55,25 @@ void setupBeacon() {
 }
 
 void updateBeacon() {
+	Bluefruit.Advertising.stop();
+	logBeacon();
 	beacon.setMajorMinor(major, minor);
 	write_beacon(beaconID, id, sensors[minor]);
+	sensors[minor]++;
 	beacon.setUuid(beaconID);
 	minor = (minor + 1) % 3;
 	Bluefruit.Advertising.setBeacon(beacon);
+	Bluefruit.Advertising.start(0);
+}
+
+void logBeacon() {
+	Serial.print("major: ");
+	Serial.print(major);
+	Serial.print(", minor: ");
+	Serial.print(minor);
+	Serial.print(", id: ");
+	Serial.println(sensors[minor]);
+
 }
 
 void loop() {
