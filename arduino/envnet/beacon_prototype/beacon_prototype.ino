@@ -1,3 +1,5 @@
+#include <beaconsense.h>
+
 #include <bluefruit.h>
 
 #define MANUFACTURER_ID	0x0059
@@ -9,7 +11,12 @@ uint8_t beaconID[16] = {
 	0x21, 0x6b, 0x64, 0x69
 };
 
-BLEBeacon beacon(beaconID, 1, 2, -45);
+
+static uint16_t	major = 1;
+static uint16_t minor = 0;
+static uint32_t	sensors[] = {100, 1000, 10000};
+static uint32_t id = 0x42;
+BLEBeacon beacon(beaconID, major, minor, -45);
 
 void setup() {
 	Bluefruit.begin();
@@ -18,11 +25,10 @@ void setup() {
 	beacon.setManufacturer(MANUFACTURER_ID);
 
 	setupBeacon();
-	suspendLoop();
 }
 
 void setupBeacon() {
-	Bluefruit.Advertising.setBeacon(beacon);
+	updateBeacon();
 	Bluefruit.ScanResponse.addName();
 	Bluefruit.Advertising.restartOnDisconnect(true);
 	Bluefruit.Advertising.setInterval(160, 160); // in unit of 0.625ms
@@ -30,4 +36,15 @@ void setupBeacon() {
 	Bluefruit.Advertising.start(0);		  // stop advertising after n second (0=never stop)
 }
 
-void loop() {}
+void updateBeacon() {
+	beacon.setMajorMinor(major, minor);
+	write_beacon(beaconID, id, sensors[minor]);
+	beacon.setUuid(beaconID);
+	minor = (minor + 1) % 3;
+	Bluefruit.Advertising.setBeacon(beacon);
+}
+
+void loop() {
+	delay(1000);
+	updateBeacon();
+}
