@@ -1,6 +1,5 @@
 #include "beaconsense.h"
 
-#include <endian.h>
 #include <string.h>
 
 static const uint32_t koopman = 0xeb31d82e;
@@ -73,7 +72,7 @@ static const uint32_t koopman_table[256] = {
 
 // CRC32 over a 12-byte value.
 static uint32_t
-crc32_16(const char *data)
+crc32_16(const uint8_t *data)
 {
 	uint8_t i;
 	uint32_t checksum = 0xffffffff;
@@ -90,19 +89,15 @@ crc32_16(const char *data)
 }
 
 bool
-write_beacon(char *beacon, uint32_t id, uint32_t sensor)
+write_beacon(uint8_t *beacon, uint32_t id, uint32_t sensor)
 {
 	uint32_t	checksum;
-	uint32_t	temp;
 
 	memcpy(beacon, header, 4);
-
-	temp = htole32(id);
-	memcpy(beacon+4, &temp, 4);
-
-	temp = htole32(sensor);
-	memcpy(beacon+8, &temp, 4);
-
+	memcpy(beacon+4, &id, 4);
+	memcpy(beacon+8, &sensor, 4);
 	checksum = crc32_16(beacon);
 	memcpy(beacon+12, &checksum, 4);
+
+	return true;
 }

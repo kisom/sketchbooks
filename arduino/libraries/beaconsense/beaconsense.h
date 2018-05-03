@@ -13,6 +13,6 @@ typedef enum {
 
 const uint8_t	header[4] = {0x45, 0x4e, 0x56, 0x53};
 
-bool	write_beacon(char *beacon, uint32_t id, uint32_t sensor);
+bool	write_beacon(uint8_t *beacon, uint32_t id, uint32_t sensor);
 
 #endif // __BEACON_SENSE_H__
