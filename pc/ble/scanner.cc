@@ -1,3 +1,5 @@
+#ifdef RAW_HCI_INTERACTIONS
+#include <sys/ioctl.h>
 #include <err.h>
 #include <getopt.h>
 
@@ -29,6 +31,12 @@ setup_socket(void)
 	inquiry.socket = hci_open_dev(inquiry.adapter);
 	if (inquiry.socket < 0) {
 		cerr << "Failed to open socket." << endl;
+		return false;
+	}
+
+	uint8_t	yes = 1;
+	if ((ioctl(inquiry.socket, FIONBIO, &yes)) < 0) {
+		cerr << "Failed to set socket as non-blocking." << endl;
 		return false;
 	}
 
@@ -67,7 +75,7 @@ start_scan(void)
 	}
 
 	// filter_dup: filter duplicates, 1 to enable
-	if ((res = hci_le_set_scan_enable(inquiry.socket, 1, 0, 10000)) < 0) {
+	if ((res = hci_le_set_scan_enable(inquiry.socket, 1, 0, 1000)) < 0) {
 		cerr << "hci_le_set_scan_enable returned " << res << endl;
 		return false;
 	}
@@ -134,3 +142,4 @@ main(int argc, char *argv[])
 
 	hci_close_dev(inquiry.socket);
 }
+#endif
