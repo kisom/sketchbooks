@@ -10,7 +10,7 @@ CXX :=		clang++
 # 		-fPIC
 CXXFLAGS :=	-Wall $(shell pkg-config --cflags dbus-1 dbus-c++-1)
 
-LDLIBS :=	-lbluetooth $(shell pkg-config --libs dbus-1 dbus-c++) -lpthread
+LDLIBS :=	-lble++
 
 ADAPTER :=	hci0
 
