@@ -5,32 +5,33 @@
 #include <cstdlib>
 #include <unistd.h>
 
+#include "beacon.h"
+
 using namespace std;
 
+/*
+ * from the prototype at one point:
+ * f1:02:0a:f4:64:34 is not a valid iBeacon.
+ * Manufacturer data: 
+ * 59  0  2 15 45  4e 56 53 42 
+ *  0  0  0 33   5  0  0 6e 
+ * 25 cb d8  1   0  1  0 d3 
+ *
+ * I *think* that the 0x0059 is a uint16_t containing the Nordic
+ * manufacturer ID.
+ *
+ * Now, what's confusing me is 
+ */
+
 static const string bluefruit = "f1:02:0a:f4:64:34";
-
-static bool
-isBeacon(const BLEPP::AdvertisingResponse &ad)
-{
-	if ((ad.type != BLEPP::LeAdvertisingEventType::ADV_SCAN_IND) &&
-	    (ad.type != BLEPP::LeAdvertisingEventType::ADV_IND)) {
-		return false;	
-	}
-
-	return true;
-}
 
 static void
 showBeacon(const BLEPP::AdvertisingResponse &ad)
 {
-	struct BLEPP::AdvertisingResponse::Name	name;	
-
+	Beacon beacon(ad);
 	cout << "Beacon: " << ad.address << endl;
-	abort();
-	if (ad.local_name) {	
-		name = *ad.local_name;
-		cout << name.name << endl;
-	}
+	cout << "\tMajor: " << beacon.major_dev() << endl;
+	cout << "\tMinor: " << beacon.minor_dev() << endl;
 }
 
 int

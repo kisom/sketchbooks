@@ -31,27 +31,14 @@ uint8_t beaconID[16] = {
 
 static uint16_t	major = 1;
 static uint16_t minor = 0;
-static uint32_t	sensors[] = {100, 1000, 10000};
-static uint32_t id = 0x42;
+static uint16_t	sensors[] = {100, 1000, 10000};
+// static uint32_t id = 0x42;
 BLEBeacon beacon(beaconID, major, minor, -45);
 
 void setup() {
-	Serial.begin(9600);
 	Bluefruit.begin();
 	Bluefruit.setTxPower(0);
-	Bluefruit.setName("env-node-proto");
 	beacon.setManufacturer(MANUFACTURER_ID);
-
-	uint8_t	addr[6];
-	uint8_t status = Bluefruit.Gap.getAddr(addr);
-	Serial.print("Adapter address: ");
-	for (uint8_t i = 0; i < 5; i++) {
-		Serial.print(addr[i], HEX);
-		Serial.print(":");
-	}
-	Serial.println(addr[5], HEX);
-
-
 	setupBeacon();
 }
 
@@ -64,26 +51,26 @@ void setupBeacon() {
 	Bluefruit.Advertising.start(0);		  // stop advertising after n second (0=never stop)
 }
 
+// void updateBeacon() {
+// 	Bluefruit.Advertising.stop();
+// 	beacon.setMajorMinor(major, minor);
+// 	write_beacon(beaconID, id, sensors[minor]);
+// 	sensors[minor]++;
+// 	beacon.setUuid(beaconID);
+// 	minor = (minor + 1) % 3;
+// 	Bluefruit.Advertising.setBeacon(beacon);
+// 	Bluefruit.Advertising.start(0);
+// }
+
 void updateBeacon() {
 	Bluefruit.Advertising.stop();
-	logBeacon();
+	minor = sensors[major];
 	beacon.setMajorMinor(major, minor);
-	write_beacon(beaconID, id, sensors[minor]);
 	sensors[minor]++;
 	beacon.setUuid(beaconID);
-	minor = (minor + 1) % 3;
+	major = (major + 1) % 3;
 	Bluefruit.Advertising.setBeacon(beacon);
 	Bluefruit.Advertising.start(0);
-}
-
-void logBeacon() {
-	Serial.print("major: ");
-	Serial.print(major);
-	Serial.print(", minor: ");
-	Serial.print(minor);
-	Serial.print(", id: ");
-	Serial.println(sensors[minor]);
-
 }
 
 void loop() {

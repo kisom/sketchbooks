@@ -1,7 +1,6 @@
 SOURCES :=	$(wildcard *.cc)
 OBJS :=		$(patsubst %.cc, %.o, $(SOURCES))
 TARGET :=	beacon-scanner
-CXX :=		clang++
 
 CXXFLAGS :=	-Wall -Wextra -pedantic -Wshadow -Wpointer-arith 	\
 		-Wcast-align -Wwrite-strings -Wmissing-declarations	\
@@ -17,6 +16,7 @@ ADAPTER :=	hci0
 all: tags $(TARGET)
 	@echo "-----"
 	@sudo ./$(TARGET)
+	@if [ -e core ]; then sudo chown kyle:kyle core ; fi
 
 $(TARGET): $(OBJS)
 	$(CXX) -o $@ $(LDFLAGS) $(OBJS) $(LDLIBS)
