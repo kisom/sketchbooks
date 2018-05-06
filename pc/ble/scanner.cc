@@ -15,11 +15,6 @@ isBeacon(const BLEPP::AdvertisingResponse &ad)
 		return false;	
 	}
 
-	if (ad.UUIDs.size() == 0) {
-		cerr << "Not a beacon: 0 UUIDs" << endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -33,11 +28,10 @@ main(void)
 		std::vector<BLEPP::AdvertisingResponse> ads =
 		    scanner.get_advertisements();
 		for (const auto &ad : ads) {
-			cout << "Device: " << ad.address << endl;
 			if (!isBeacon(ad)) {
-				cerr << "\tnot a beacon" << endl;
 				continue;
 			}
+			cout << "Beacon: " << ad.address << endl;
 			for (const auto &uuid : ad.UUIDs) {
 				cout << "\tUUID: " << to_str(uuid) << endl;
 			}

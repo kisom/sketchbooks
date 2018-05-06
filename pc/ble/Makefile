@@ -3,12 +3,11 @@ OBJS :=		$(patsubst %.cc, %.o, $(SOURCES))
 TARGET :=	beacon-scanner
 CXX :=		clang++
 
-# CXXFLAGS :=	-Wall -Wextra -pedantic -Wshadow -Wpointer-arith 	\
-# 		-Wcast-align -Wwrite-strings -Wmissing-declarations	\
-# 		-Wno-long-long -Werror -Wunused-variable -std=c++17	\
-# 		-D_XOPEN_SOURCE -O0 -g -I. -fno-elide-constructors	\
-# 		-fPIC
-CXXFLAGS :=	-Wall $(shell pkg-config --cflags dbus-1 dbus-c++-1)
+CXXFLAGS :=	-Wall -Wextra -pedantic -Wshadow -Wpointer-arith 	\
+		-Wcast-align -Wwrite-strings -Wmissing-declarations	\
+		-Wno-long-long -Werror -Wunused-variable -std=c++17	\
+		-D_XOPEN_SOURCE -O0 -g -I. -fno-elide-constructors	\
+		-fPIC -Weffc++
 
 LDLIBS :=	-lble++
 
