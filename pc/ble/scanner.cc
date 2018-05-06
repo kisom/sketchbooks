@@ -7,6 +7,8 @@
 
 using namespace std;
 
+static const string bluefruit = "f1:02:0a:f4:64:34";
+
 static bool
 isBeacon(const BLEPP::AdvertisingResponse &ad)
 {
@@ -18,11 +20,25 @@ isBeacon(const BLEPP::AdvertisingResponse &ad)
 	return true;
 }
 
+static void
+showBeacon(const BLEPP::AdvertisingResponse &ad)
+{
+	struct BLEPP::AdvertisingResponse::Name	name;	
+
+	cout << "Beacon: " << ad.address << endl;
+	abort();
+	if (ad.local_name) {	
+		name = *ad.local_name;
+		cout << name.name << endl;
+	}
+}
+
 int
 main(void)
 {
 	BLEPP::log_level = BLEPP::LogLevels::Error;
-	BLEPP::HCIScanner scanner;
+	BLEPP::HCIScanner scanner(true, BLEPP::HCIScanner::FilterDuplicates::Off,
+	    BLEPP::HCIScanner::ScanType::Passive, "");
 
 	while (true) {
 		std::vector<BLEPP::AdvertisingResponse> ads =
@@ -31,10 +47,11 @@ main(void)
 			if (!isBeacon(ad)) {
 				continue;
 			}
-			cout << "Beacon: " << ad.address << endl;
-			for (const auto &uuid : ad.UUIDs) {
-				cout << "\tUUID: " << to_str(uuid) << endl;
+
+			if (ad.address != bluefruit) {
+				continue;
 			}
+			showBeacon(ad);
 		}
 	sleep(1);
 	}

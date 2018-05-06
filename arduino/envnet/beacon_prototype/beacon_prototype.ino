@@ -42,6 +42,16 @@ void setup() {
 	Bluefruit.setName("env-node-proto");
 	beacon.setManufacturer(MANUFACTURER_ID);
 
+	uint8_t	addr[6];
+	uint8_t status = Bluefruit.Gap.getAddr(addr);
+	Serial.print("Adapter address: ");
+	for (uint8_t i = 0; i < 5; i++) {
+		Serial.print(addr[i], HEX);
+		Serial.print(":");
+	}
+	Serial.println(addr[5], HEX);
+
+
 	setupBeacon();
 }
 
