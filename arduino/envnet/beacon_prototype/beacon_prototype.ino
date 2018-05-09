@@ -168,8 +168,6 @@ static constexpr char	formatString[] = "%04d-%02d-%02d %02d:%02d %03d%%\n";
 static uint32_t		last_update = 0;
 
 void writeLogfile() {
-	static int writes = 0;
-
 	int voltage = analogRead(batteryVoltage);
 	uint8_t vbat_per = mvToPercent(voltage * VBAT_MV_PER_LSB);
 
@@ -190,11 +188,6 @@ void writeLogfile() {
 	}
 
 	log.write(line);
-	writes++;
-	if (writes >= 10) {
-		log.flush();
-		writes = 0;
-	}
 	ok = true;
 
 exit:
