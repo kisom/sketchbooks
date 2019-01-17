@@ -6,3 +6,4 @@
 
 # PC build artifacts
 /pc/ble/beacon-scanner
+/arduino/libraries/
