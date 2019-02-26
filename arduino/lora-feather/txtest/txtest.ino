@@ -7,6 +7,7 @@
 // It is designed to work with the other example Feather9x_RX
 
 #include <SPI.h>
+#include <Scheduler.h>
 #include <RH_RF95.h>
 
 #define RFM95_CS 8
@@ -19,6 +20,23 @@
 
 // Singleton instance of the radio driver
 RH_RF95 rf95(RFM95_CS, RFM95_INT);
+
+const int ledPin = 13;
+
+void beaconLoop() {
+  digitalWrite(ledPin, HIGH);
+  delay(100);
+  yield();
+  digitalWrite(ledPin, LOW);
+  delay(100);
+  yield();
+  digitalWrite(ledPin, HIGH);
+  delay(100);
+  yield();
+  digitalWrite(ledPin, LOW);
+  delay(700);
+  yield();
+}
 
 void setup()
 {
@@ -59,6 +77,9 @@ void setup()
   // If you are using RFM95/96/97/98 modules which uses the PA_BOOST transmitter pin, then
   // you can set transmitter powers from 5 to 23 dBm:
   rf95.setTxPower(23, false);
+
+  pinMode(ledPin, OUTPUT);
+  Scheduler.startLoop(beaconLoop);
 }
 
 int16_t packetnum = 0;  // packet counter, we increment per xmission
@@ -66,6 +87,7 @@ int16_t packetnum = 0;  // packet counter, we increment per xmission
 void loop()
 {
   delay(1000); // Wait 1 second between transmits, could also 'sleep' here!
+  yield();
   Serial.println("Transmitting..."); // Send a message to rf95_server
 
   char radiopacket[20] = "Hello World #      ";
@@ -75,34 +97,10 @@ void loop()
 
   Serial.println("Sending...");
   delay(10);
+  yield();
   rf95.send((uint8_t *)radiopacket, 20);
-
   Serial.println("Waiting for packet to complete...");
   delay(10);
   rf95.waitPacketSent();
-  // Now wait for a reply
-  uint8_t buf[RH_RF95_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(buf);
-
-  Serial.println("Waiting for reply...");
-  if (rf95.waitAvailableTimeout(1000))
-  {
-    // Should be a reply message for us now
-    if (rf95.recv(buf, &len))
-    {
-      Serial.print("Got reply: ");
-      Serial.println((char*)buf);
-      Serial.print("RSSI: ");
-      Serial.println(rf95.lastRssi(), DEC);
-    }
-    else
-    {
-      Serial.println("Receive failed");
-    }
-  }
-  else
-  {
-    Serial.println("No reply, is there a listener around?");
-  }
-
+  yield();
 }
